@@ -1,0 +1,468 @@
+# 🐳 Docker Notes
+
+<p align="center">
+  <b>Application Deployment Using Docker</b><br>
+  <i>DevOps Assignment — Group 2</i>
+</p>
+
+<p align="center">
+
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square\&logo=docker\&logoColor=white)
+![DevOps](https://img.shields.io/badge/DevOps-Deployment-6C63FF?style=flat-square)
+![Containers](https://img.shields.io/badge/Containers-Concepts-success?style=flat-square)
+
+</p>
+
+---
+
+## 📌 About
+
+These notes provide a **short and practical introduction to Docker**, focusing mainly on **application deployment**.
+
+```text
+Code
+ ↓
+Dockerfile
+ ↓
+Docker Image
+ ↓
+Container
+ ↓
+Deployed Application 🚀
+```
+
+---
+
+## 📚 Topics
+
+| #  | Topic                  | Notes                        |
+| -- | ---------------------- | ---------------------------- |
+| 01 | 🐳 Docker Basics       | Introduction & key concepts  |
+| 02 | 🏗️ Architecture       | Docker components            |
+| 03 | 📦 Images & Containers | Create and manage containers |
+| 04 | 📝 Dockerfile          | Build custom images          |
+| 05 | 🚀 Deployment          | Run applications             |
+| 06 | 💾 Volumes             | Persistent data              |
+| 07 | 🌐 Networking          | Container communication      |
+| 08 | ⚙️ Docker Compose      | Multi-container apps         |
+| 09 | ☁️ Docker Hub          | Image sharing                |
+| 10 | 🔄 CI/CD               | Automated deployment         |
+| 11 | 🔐 Security            | Basic best practices         |
+| 12 | 🛠️ Troubleshooting    | Common problems              |
+
+---
+
+# 1️⃣ Docker Basics
+
+### What is Docker?
+
+Docker is a platform used to **package and run applications inside containers**.
+
+### Why Docker?
+
+* 🚀 Fast deployment
+* 📦 Packages application + dependencies
+* 🔄 Consistent environments
+* 🌍 Portable
+* 🔒 Isolated
+* ⚙️ Supports CI/CD
+
+### Important Terms
+
+```text
+Image      → Template
+Container  → Running instance of image
+Dockerfile → Instructions to build image
+Registry   → Stores Docker images
+Volume     → Persistent storage
+Network    → Container communication
+```
+
+---
+
+# 2️⃣ Docker Architecture
+
+```text
+👨‍💻 User
+   ↓
+Docker CLI
+   ↓
+Docker Engine / Daemon
+   ↓
+┌──────────┬────────────┬───────────┐
+│  Images  │ Containers │ Networks  │
+└──────────┴────────────┴───────────┘
+                │
+             Volumes
+```
+
+**Main components:**
+
+* Docker CLI
+* Docker Engine
+* Docker Images
+* Docker Containers
+* Docker Registry
+* Docker Networks
+* Docker Volumes
+
+---
+
+# 3️⃣ Images & Containers
+
+### Image
+
+A Docker image is a **template/package** used to create containers.
+
+### Container
+
+A container is a **runtime instance of an image**.
+
+```bash
+docker pull nginx
+docker images
+
+docker run nginx
+docker run -d --name my-nginx nginx
+
+docker ps
+docker ps -a
+```
+
+### Container Management
+
+```bash
+docker start CONTAINER
+docker stop CONTAINER
+docker restart CONTAINER
+docker rm CONTAINER
+```
+
+### Logs
+
+```bash
+docker logs CONTAINER
+docker logs -f CONTAINER
+```
+
+---
+
+# 4️⃣ Dockerfile
+
+A `Dockerfile` contains instructions for building a Docker image.
+
+### Example
+
+```dockerfile
+FROM node:20
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+### Important Instructions
+
+| Instruction | Purpose                   |
+| ----------- | ------------------------- |
+| `FROM`      | Base image                |
+| `WORKDIR`   | Working directory         |
+| `COPY`      | Copy files                |
+| `RUN`       | Execute build command     |
+| `EXPOSE`    | Document application port |
+| `CMD`       | Default startup command   |
+
+### Build
+
+```bash
+docker build -t my-app:1.0 .
+```
+
+# 5️⃣ Application Deployment 🚀
+
+Run the application:
+
+```bash
+docker run -d -p 3000:3000 --name my-app my-app:1.0
+```
+
+### Port Mapping
+
+```text
+Host Port : Container Port
+
+3000 : 3000
+```
+
+```text
+🌐 Browser
+    ↓
+Host : 3000
+    ↓
+Docker Port Mapping
+    ↓
+Container : 3000
+    ↓
+Application
+```
+
+### Verify
+
+```bash
+docker ps
+docker logs my-app
+docker exec -it my-app sh
+```
+
+---
+
+# 6️⃣ Docker Volumes 💾
+
+Volumes are used for **persistent data**.
+
+```bash
+docker volume ls
+docker volume create app-data
+docker volume inspect app-data
+```
+
+### Mount Volume
+
+```bash
+docker run -d -v app-data:/data IMAGE
+```
+
+**Common uses:**
+
+* Databases
+* Uploaded files
+* Application data
+
+---
+
+# 7️⃣ Docker Networking 🌐
+
+Networking allows containers to communicate.
+
+```bash
+docker network ls
+docker network create app-network
+docker network inspect app-network
+```
+
+### Example
+
+```bash
+docker run -d \
+  --name backend \
+  --network app-network \
+  backend-image
+```
+
+```text
+Frontend
+   ↓
+Docker Network
+   ↓
+Backend
+   ↓
+Database
+```
+
+---
+
+# 8️⃣ Docker Compose ⚙️
+
+Docker Compose is used for **multi-container applications**.
+
+```text
+Frontend
+    ↓
+Backend
+    ↓
+Database
+```
+
+### Important Commands
+
+```bash
+docker compose up
+docker compose up -d
+docker compose ps
+docker compose logs
+docker compose build
+docker compose restart
+docker compose down
+```
+
+---
+
+# 9️⃣ Docker Hub / Registry ☁️
+
+A registry stores and distributes Docker images.
+
+### Workflow
+
+```text
+Build
+ ↓
+Tag
+ ↓
+Push
+ ↓
+Registry
+ ↓
+Pull
+ ↓
+Deploy
+```
+
+### Commands
+
+```bash
+docker login
+
+docker tag my-app:1.0 username/my-app:1.0
+
+docker push username/my-app:1.0
+
+docker pull username/my-app:1.0
+```
+
+---
+
+# 🔟 Docker + CI/CD 🔄
+
+Docker can be integrated into CI/CD pipelines.
+
+```text
+GitHub
+   ↓
+CI/CD
+   ↓
+Docker Build
+   ↓
+Test / Scan
+   ↓
+Docker Registry
+   ↓
+Deployment Server
+   ↓
+Container 🚀
+```
+
+Common tools:
+
+* Jenkins
+* GitHub Actions
+* GitLab CI/CD
+* Azure DevOps
+
+---
+
+# 🔐 Security Basics
+
+* Use trusted images.
+* Keep images updated
+* Avoid unnecessary root privileges
+* Never hard-code passwords/API keys
+* Scan images for vulnerabilities
+* Expose only required ports
+
+---
+
+# 🛠️ Quick Troubleshooting
+
+### Container stopped
+
+```bash
+docker ps -a
+docker logs CONTAINER
+```
+
+### Check container
+
+```bash
+docker inspect CONTAINER
+```
+
+### Check resources
+
+```bash
+docker stats
+```
+
+### Check Docker disk usage
+
+```bash
+docker system df
+```
+
+---
+
+# ⭐ Essential Command List
+
+```bash
+docker --version
+docker pull IMAGE
+docker images
+docker run IMAGE
+docker ps
+docker ps -a
+docker start CONTAINER
+docker stop CONTAINER
+docker restart CONTAINER
+docker rm CONTAINER
+docker logs CONTAINER
+docker exec -it CONTAINER sh
+docker build -t NAME:TAG .
+docker volume ls
+docker network ls
+docker network create NAME
+docker login
+docker tag SOURCE TARGET
+docker push IMAGE
+docker pull IMAGE
+docker compose up -d
+docker compose ps
+docker compose logs
+docker compose down
+```
+
+---
+
+# 🚀 Complete Deployment Flow
+
+```text
+💻 CODE
+   ↓
+📝 DOCKERFILE
+   ↓
+🔨 docker build
+   ↓
+📦 DOCKER IMAGE
+   ↓
+☁️ DOCKER REGISTRY
+   ↓
+⬇️ docker pull
+   ↓
+🚀 DOCKER CONTAINER
+   ↓
+🌐 DEPLOYED APPLICATION
+```
+
+---
+
+## 🎯 Key Takeaway
+
+> **Docker packages an application and its dependencies into a container, making deployment consistent, portable, repeatable, and easier to automate.**
+
+<p align="center">
+  🐳 <b>Learn Docker → Build → Containerize → Deploy → Automate</b> 
+</p>
+
+<p align="center">
+  <i>DevOps Assignment — Group 2</i>
+</p>
